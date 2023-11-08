@@ -1,0 +1,58 @@
+[tool.poetry]
+name = "crypto-labs"
+version = "0.1.0"
+description = ""
+authors = ["Rusih100 <rusih100@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.1.4"
+black = "^23.10.1"
+isort = "^5.12.0"
+mypy = "^1.6.1"
+
+[tool.black]
+target-version = ['py311']
+line-length = 80
+
+[tool.isort]
+profile = "black"
+line_length = 80
+multi_line_output = 3
+combine_as_imports = true
+
+[tool.ruff]
+target-version = "py311"
+line-length = 80
+ignore-init-module-imports = true
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "UP",     # pyupgrade
+    "C",      # flake8-comprehensions
+    "B",      # flake8-bugbear
+    "ISC",    # flake8-implicit-str-concat
+    "ASYNC",  # flake8-async
+    "ANN",    # flake8-annotations
+    "TCH",    # flake8-type-checking
+    "PT",     # flake8-pytest-style
+    "RUF",    # ruff-specific rules
+]
+ignore = [
+    "E501",   # line too long, handled by black
+    "B008",   # do not perform function calls in argument defaults
+    "F821",   # checks for uses of undefined names, breaks sqlalchemy models
+    "UP007",  # large models are unreadable
+    "ANN101", # removes type checking for self
+    "ANN102", # removes type checking for cls
+    "ANN401", # allows type Any
+    "RUF012"  # typing.ClassVar
+]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
