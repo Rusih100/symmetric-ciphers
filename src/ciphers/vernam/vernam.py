@@ -1,12 +1,12 @@
 from typing import Final
 
 
-class VernamCipher:
+class Vernam:
     def __init__(self, gamma: bytes, *, mod: int = 256) -> None:
         self.gamma = gamma
         self._MOD: Final[int] = mod
 
-    def encode(self, data: bytes) -> bytes:
+    def encrypt(self, data: bytes) -> bytes:
         encoded: list[int] = []
 
         for i, m in enumerate(data):
@@ -14,7 +14,7 @@ class VernamCipher:
             encoded.append(c)
         return bytes(encoded)
 
-    def decode(self, data: bytes) -> bytes:
+    def decrypt(self, data: bytes) -> bytes:
         decoded: list[int] = []
 
         for i, c in enumerate(data):
