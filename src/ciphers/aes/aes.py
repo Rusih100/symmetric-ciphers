@@ -1,19 +1,54 @@
-from .consts import INV_SUB_BYTES_TABLE, POLY_MUL_TABLE, SUB_BYTES_TABLE
+from .consts import INV_SBOX_TABLE, POLY_MUL_TABLE, RCON_TABLE, SBOX_TABLE
 
 
 class AES128:
-    def __init__(self) -> None:
-        ...
+    def __init__(self, *, cipher_key: bytes) -> None:
+        assert isinstance(cipher_key, bytes)
+        assert len(cipher_key) == 16
+
+        self._key_schedule: bytearray = bytearray(cipher_key)
+        self._key_expansion()
+
+    def _key_expansion(self) -> None:
+        for r in range(0, 9):
+            word = self._key_schedule[-4:]
+            self._rot_word(word)
+            self._sub_word(word)
+
+            for i in range(4):
+                word[i] = (
+                    word[i]
+                    ^ RCON_TABLE[i + (4 * r)]
+                    ^ self._key_schedule[i + (16 * r)]
+                )
+            self._key_schedule += word
+
+            for k in range(1, 4):
+                word = self._key_schedule[-4:]
+                for i in range(4):
+                    word[i] = (
+                        word[i] ^ self._key_schedule[i + (k * 4) + (16 * r)]
+                    )
+                self._key_schedule += word
+
+    @staticmethod
+    def _rot_word(word: bytearray) -> None:
+        w = word
+        w[0], w[1], w[2], w[3] = w[1], w[2], w[3], w[0]
+
+    @classmethod
+    def _sub_word(cls, word: bytearray) -> None:
+        cls._sub_bytes(word)
 
     @staticmethod
     def _sub_bytes(block: bytearray) -> None:
         for i, b in enumerate(block):
-            block[i] = SUB_BYTES_TABLE[b]
+            block[i] = SBOX_TABLE[b]
 
     @staticmethod
     def _inverse_sub_bytes(block: bytearray) -> None:
         for i, b in enumerate(block):
-            block[i] = INV_SUB_BYTES_TABLE[b]
+            block[i] = INV_SBOX_TABLE[b]
 
     @staticmethod
     def _shift_rows(block: bytearray) -> None:
@@ -55,12 +90,10 @@ class AES128:
             # fmt: on
             b[i], b[i + 1], b[i + 2], b[i + 3] = n0, n1, n2, n3
 
-    @staticmethod
-    def _add_round_key(block: bytearray) -> None:
+    def _add_round_key(self, block: bytearray) -> None:
         ...
 
-    @staticmethod
-    def _inverse_add_round_key(block: bytearray) -> None:
+    def _inverse_add_round_key(self, block: bytearray) -> None:
         ...
 
 
