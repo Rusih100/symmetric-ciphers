@@ -2,15 +2,47 @@ from .consts import INV_SBOX_TABLE, POLY_MUL_TABLE, RCON_TABLE, SBOX_TABLE
 
 
 class AES128:
-    def __init__(self, *, cipher_key: bytes) -> None:
+    def __init__(self, cipher_key: bytes) -> None:
         assert isinstance(cipher_key, bytes)
         assert len(cipher_key) == 16
 
         self._key_schedule: bytearray = bytearray(cipher_key)
         self._key_expansion()
 
+    def encrypt(self, data: bytes) -> bytes:
+        ...
+
+    def decrypt(self, data: bytes) -> bytes:
+        ...
+
+    def _encrypt_block(self, block: bytearray) -> None:
+        self._add_round_key(block, 0)
+
+        for r in range(1, 10):
+            self._sub_bytes(block)
+            self._shift_rows(block)
+            self._mix_column(block)
+            self._add_round_key(block, r)
+
+        self._sub_bytes(block)
+        self._shift_rows(block)
+        self._add_round_key(block, 10)
+
+    def _decrypt_block(self, block: bytearray) -> None:
+        self._inverse_add_round_key(block, 10)
+        self._inverse_shift_rows(block)
+        self._inverse_sub_bytes(block)
+
+        for r in range(9, 0, -1):
+            self._inverse_add_round_key(block, r)
+            self._inverse_mix_column(block)
+            self._inverse_shift_rows(block)
+            self._inverse_sub_bytes(block)
+
+        self._inverse_add_round_key(block, 0)
+
     def _key_expansion(self) -> None:
-        for r in range(0, 9):
+        for r in range(10):
             word = self._key_schedule[-4:]
             self._rot_word(word)
             self._sub_word(word)
@@ -90,15 +122,12 @@ class AES128:
             # fmt: on
             b[i], b[i + 1], b[i + 2], b[i + 3] = n0, n1, n2, n3
 
-    def _add_round_key(self, block: bytearray) -> None:
-        ...
+    def _add_round_key(self, block: bytearray, round_num: int) -> None:
+        for i in range(16):
+            block[i] = block[i] ^ self._key_schedule[i + (round_num * 16)]
 
-    def _inverse_add_round_key(self, block: bytearray) -> None:
-        ...
+    def _inverse_add_round_key(self, block: bytearray, round_num: int) -> None:
+        self._add_round_key(block, round_num)
 
 
-# TODO: Написать алгоритм генерации раундовых ключей
-# TODO: Написать алгоритм _add_round_key
 # TODO: Написать разбиение на блоки
-# TODO: Написать алгоритм шифрования
-# TODO: Написать алгоритм расшифрования
