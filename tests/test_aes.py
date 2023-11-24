@@ -35,7 +35,7 @@ class TestAES128:
             bytearray(
                 [0x19, 0x3d, 0xe3, 0xbe, 0xa0, 0xf4, 0xe2, 0x2b, 0x9a, 0xc6, 0x8d, 0x2a, 0xe9, 0xf8, 0x48, 0x08]
             ),
-            *[bytearray(randbytes(16)) for _ in range(20)],
+            *[bytearray(randbytes(16)) for _ in range(50)],
             # fmt: on
         ],
     )
@@ -73,7 +73,7 @@ class TestAES128:
             bytearray(
                 [0xd4, 0x27, 0x11, 0xae, 0xe0, 0xbf, 0x98, 0xf1, 0xb8, 0xb4, 0x5d, 0xe5, 0x1e, 0x41, 0x52, 0x30]
             ),
-            *[bytearray(randbytes(16)) for _ in range(20)]
+            *[bytearray(randbytes(16)) for _ in range(50)]
             # fmt: on
         ],
     )
@@ -111,7 +111,7 @@ class TestAES128:
             bytearray(
                 [0xd4, 0xbf, 0x5d, 0x30, 0xe0, 0xb4, 0x52, 0xae, 0xb8, 0x41, 0x11, 0xf1, 0x1e, 0x27, 0x98, 0xe5]
             ),
-            *[bytearray(randbytes(16)) for _ in range(20)],
+            *[bytearray(randbytes(16)) for _ in range(50)],
             # fmt: on
         ],
     )
@@ -161,7 +161,7 @@ class TestAES128:
                 (
                     randbytes(16),
                     bytearray(randbytes(16))
-                ) for _ in range(20)
+                ) for _ in range(50)
             ]
             # fmt: on
         ],

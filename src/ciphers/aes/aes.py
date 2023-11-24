@@ -1,19 +1,34 @@
+from ...protocols import Blocks
+from ..blocks import BlocksPKCS5
 from .consts import INV_SBOX_TABLE, POLY_MUL_TABLE, RCON_TABLE, SBOX_TABLE
 
 
 class AES128:
-    def __init__(self, cipher_key: bytes) -> None:
+    def __init__(
+        self, cipher_key: bytes, *, blocks_class: Blocks = BlocksPKCS5
+    ) -> None:
         assert isinstance(cipher_key, bytes)
         assert len(cipher_key) == 16
 
+        self._blocks_class = blocks_class
         self._key_schedule: bytearray = bytearray(cipher_key)
         self._key_expansion()
 
     def encrypt(self, data: bytes) -> bytes:
-        ...
+        blocks = self._blocks_class.to_blocks(data, block_size=16, padding=True)
+        for block in blocks:
+            self._encrypt_block(block)
+
+        return self._blocks_class.from_blocks(blocks, padding=False)
 
     def decrypt(self, data: bytes) -> bytes:
-        ...
+        blocks = self._blocks_class.to_blocks(
+            data, block_size=16, padding=False
+        )
+        for block in blocks:
+            self._decrypt_block(block)
+
+        return self._blocks_class.from_blocks(blocks, padding=True)
 
     def _encrypt_block(self, block: bytearray) -> None:
         self._add_round_key(block, 0)
@@ -128,6 +143,3 @@ class AES128:
 
     def _inverse_add_round_key(self, block: bytearray, round_num: int) -> None:
         self._add_round_key(block, round_num)
-
-
-# TODO: Написать разбиение на блоки
