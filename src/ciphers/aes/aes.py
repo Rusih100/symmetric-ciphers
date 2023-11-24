@@ -5,12 +5,16 @@ from .consts import INV_SBOX_TABLE, POLY_MUL_TABLE, RCON_TABLE, SBOX_TABLE
 
 class AES128:
     def __init__(
-        self, cipher_key: bytes, *, blocks_class: Blocks = BlocksSinglePKCS7
+        self,
+        cipher_key: bytes,
+        *,
+        blocks_class: Blocks = BlocksSinglePKCS7,
     ) -> None:
         assert isinstance(cipher_key, bytes)
         assert len(cipher_key) == 16
 
         self._blocks_class = blocks_class
+
         self._key_schedule: bytearray = bytearray(cipher_key)
         self._key_expansion()
 
