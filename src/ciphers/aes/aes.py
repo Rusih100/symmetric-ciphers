@@ -1,11 +1,11 @@
 from ...protocols import Blocks
-from ..blocks import BlocksPKCS5
+from ..blocks import BlocksSinglePKCS7
 from .consts import INV_SBOX_TABLE, POLY_MUL_TABLE, RCON_TABLE, SBOX_TABLE
 
 
 class AES128:
     def __init__(
-        self, cipher_key: bytes, *, blocks_class: Blocks = BlocksPKCS5
+        self, cipher_key: bytes, *, blocks_class: Blocks = BlocksSinglePKCS7
     ) -> None:
         assert isinstance(cipher_key, bytes)
         assert len(cipher_key) == 16

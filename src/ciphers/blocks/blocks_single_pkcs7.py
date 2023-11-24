@@ -1,24 +1,28 @@
 from math import ceil
 
 
-class BlocksPKCS5:
+class BlocksSinglePKCS7:
     @classmethod
     def to_blocks(
         cls, data: bytes, block_size: int, *, padding: bool
     ) -> list[bytearray]:
-        if not padding:
-            block_size = block_size + 1
-        blocks = cls._bytes_to_blocks(data, block_size - 1)
+        blocks = cls._bytes_to_blocks(data, block_size)
+
         if padding:
-            for block in blocks:
-                cls._add_padding(block, block_size)
+            if len(data) % block_size == 0:
+                value = block_size.to_bytes(1, byteorder="big")
+                blocks.append(bytearray(value * block_size))
+            else:
+                cls._add_padding(blocks[-1], block_size)
         return blocks
 
     @classmethod
     def from_blocks(cls, blocks: list[bytearray], *, padding: bool) -> bytes:
         if padding:
-            for block in blocks:
-                cls._del_padding(block)
+            cls._del_padding(blocks[-1])
+            if not blocks[-1]:
+                blocks.pop()
+
         return cls._blocks_to_bytes(blocks)
 
     @staticmethod
@@ -47,8 +51,7 @@ class BlocksPKCS5:
             )
 
         value = count.to_bytes(1, byteorder="big")
-        for _ in range(count):
-            block += value
+        block += value * count
 
     @staticmethod
     def _del_padding(block: bytearray) -> None:
