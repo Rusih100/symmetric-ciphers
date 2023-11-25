@@ -8,14 +8,14 @@ def main() -> None:
 
     aes = AES128(cipher_key=key)
 
-    message = b"This is the message to be encrypted "
+    message = b"This is the message to be encrypted " * 10000
 
     cipher_message = aes.encrypt(message)
 
-    print(cipher_message)
+    # print(cipher_message)
     decrypt_message = aes.decrypt(cipher_message)
 
-    print(decrypt_message)
+    # print(decrypt_message)
 
 
 if __name__ == "__main__":
