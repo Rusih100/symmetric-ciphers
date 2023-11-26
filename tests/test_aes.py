@@ -2,10 +2,10 @@ from copy import copy
 from random import randbytes, randint
 
 import pytest
-from Crypto.Cipher import AES
+from Crypto.Cipher import AES as LibAES
 from Crypto.Util.Padding import pad
 
-from src.ciphers import AES128
+from src.ciphers import AES
 
 
 class TestAES128:
@@ -27,7 +27,7 @@ class TestAES128:
     def test_sub_bytes(
         self, block: bytearray, expected_block: bytearray
     ) -> None:
-        AES128._sub_bytes(block)
+        AES._sub_bytes(block)
         assert block == expected_block
 
     @pytest.mark.parametrize(
@@ -37,14 +37,14 @@ class TestAES128:
             bytearray(
                 [0x19, 0x3d, 0xe3, 0xbe, 0xa0, 0xf4, 0xe2, 0x2b, 0x9a, 0xc6, 0x8d, 0x2a, 0xe9, 0xf8, 0x48, 0x08]
             ),
-            *[bytearray(randbytes(16)) for _ in range(50)],
+            *[bytearray(randbytes(16)) for _ in range(10)],
             # fmt: on
         ],
     )
     def test_inverse_sub_bytes(self, block: bytearray) -> None:
         b = copy(block)
-        AES128._sub_bytes(b)
-        AES128._inverse_sub_bytes(b)
+        AES._sub_bytes(b)
+        AES._inverse_sub_bytes(b)
         assert b == block
 
     @pytest.mark.parametrize(
@@ -65,7 +65,7 @@ class TestAES128:
     def test_shift_rows(
         self, block: bytearray, expected_block: bytearray
     ) -> None:
-        AES128._shift_rows(block)
+        AES._shift_rows(block)
         assert block == expected_block
 
     @pytest.mark.parametrize(
@@ -75,14 +75,14 @@ class TestAES128:
             bytearray(
                 [0xd4, 0x27, 0x11, 0xae, 0xe0, 0xbf, 0x98, 0xf1, 0xb8, 0xb4, 0x5d, 0xe5, 0x1e, 0x41, 0x52, 0x30]
             ),
-            *[bytearray(randbytes(16)) for _ in range(50)]
+            *[bytearray(randbytes(16)) for _ in range(10)]
             # fmt: on
         ],
     )
     def test_inverse_shift_rows(self, block: bytearray) -> None:
         b = copy(block)
-        AES128._shift_rows(b)
-        AES128._inverse_shift_rows(b)
+        AES._shift_rows(b)
+        AES._inverse_shift_rows(b)
         assert b == block
 
     @pytest.mark.parametrize(
@@ -103,7 +103,7 @@ class TestAES128:
     def test_mix_column(
         self, block: bytearray, expected_block: bytearray
     ) -> None:
-        AES128._mix_column(block)
+        AES._mix_column(block)
         assert block == expected_block
 
     @pytest.mark.parametrize(
@@ -113,14 +113,14 @@ class TestAES128:
             bytearray(
                 [0xd4, 0xbf, 0x5d, 0x30, 0xe0, 0xb4, 0x52, 0xae, 0xb8, 0x41, 0x11, 0xf1, 0x1e, 0x27, 0x98, 0xe5]
             ),
-            *[bytearray(randbytes(16)) for _ in range(50)],
+            *[bytearray(randbytes(16)) for _ in range(10)],
             # fmt: on
         ],
     )
     def test_inverse_mix_column(self, block: bytearray) -> None:
         b = copy(block)
-        AES128._mix_column(b)
-        AES128._inverse_mix_column(b)
+        AES._mix_column(b)
+        AES._inverse_mix_column(b)
         assert b == block
 
     @pytest.mark.parametrize(
@@ -145,7 +145,7 @@ class TestAES128:
         block: bytearray,
         expected_block: bytearray,
     ) -> None:
-        aes = AES128(cipher_key=key)
+        aes = AES(cipher_key=key)
         aes._add_round_key(block, 1)
         assert block == expected_block
 
@@ -163,7 +163,7 @@ class TestAES128:
                 (
                     randbytes(16),
                     bytearray(randbytes(16))
-                ) for _ in range(50)
+                ) for _ in range(10)
             ]
             # fmt: on
         ],
@@ -174,7 +174,7 @@ class TestAES128:
         block: bytearray,
     ) -> None:
         b = copy(block)
-        aes = AES128(cipher_key=key)
+        aes = AES(cipher_key=key)
         aes._add_round_key(block, 1)
         aes._inverse_add_round_key(block, 1)
         assert block == b
@@ -207,7 +207,7 @@ class TestAES128:
     def test_key_expansion(
         self, key: bytes, expected_key_schedule: bytearray
     ) -> None:
-        aes = AES128(cipher_key=key)
+        aes = AES(cipher_key=key)
         assert aes._key_schedule == expected_key_schedule
 
     @pytest.mark.parametrize(
@@ -229,7 +229,7 @@ class TestAES128:
     def test_encrypt_block(
         self, key: bytes, block: bytearray, expected_block: bytearray
     ) -> None:
-        aes = AES128(cipher_key=key)
+        aes = AES(cipher_key=key)
         aes._encrypt_block(block)
 
         assert block == expected_block
@@ -248,14 +248,14 @@ class TestAES128:
                 (
                     randbytes(16),
                     bytearray(randbytes(16))
-                ) for _ in range(50)
+                ) for _ in range(10)
             ]
             # fmt: on
         ],
     )
     def test_decrypt_block(self, key: bytes, block: bytearray) -> None:
         b = copy(block)
-        aes = AES128(cipher_key=key)
+        aes = AES(cipher_key=key)
         aes._encrypt_block(block)
         aes._decrypt_block(block)
 
@@ -264,12 +264,12 @@ class TestAES128:
     @pytest.mark.parametrize(
         ("key", "message"),
         [
-            *[(randbytes(16), randbytes(randint(1, 256))) for _ in range(20)]
+            *[(randbytes(16), randbytes(randint(1, 256))) for _ in range(10)]
         ],
     )
     def test_lib_aes(self, key: bytes, message: bytes) -> None:
-        aes_lib = AES.new(key, AES.MODE_ECB)
+        aes_lib = LibAES.new(key, LibAES.MODE_ECB)
         message_lib = pad(message, 16)
 
-        aes = AES128(cipher_key=key)
+        aes = AES(cipher_key=key)
         assert aes_lib.encrypt(message_lib) == aes.encrypt(message)

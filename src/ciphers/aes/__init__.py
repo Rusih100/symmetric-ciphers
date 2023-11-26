@@ -1,3 +1,3 @@
-from .aes import AES128
+from .aes import AES
 
-__all__ = ("AES128",)
+__all__ = ("AES",)

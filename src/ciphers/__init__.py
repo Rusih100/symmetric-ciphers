@@ -1,4 +1,4 @@
-from .aes import AES128
+from .aes import AES
 from .vernam import Vernam
 
-__all__ = ("AES128", "Vernam")
+__all__ = ("AES", "Vernam")

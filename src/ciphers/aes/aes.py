@@ -3,7 +3,7 @@ from ..blocks import BlocksSinglePKCS7
 from .consts import INV_SBOX_TABLE, POLY_MUL_TABLE, RCON_TABLE, SBOX_TABLE
 
 
-class AES128:
+class AES:
     def __init__(
         self,
         cipher_key: bytes,
