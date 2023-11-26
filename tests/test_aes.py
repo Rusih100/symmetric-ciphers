@@ -1,7 +1,9 @@
 from copy import copy
-from random import randbytes
+from random import randbytes, randint
 
 import pytest
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad
 
 from src.ciphers import AES128
 
@@ -258,3 +260,16 @@ class TestAES128:
         aes._decrypt_block(block)
 
         assert block == b
+
+    @pytest.mark.parametrize(
+        ("key", "message"),
+        [
+            *[(randbytes(16), randbytes(randint(1, 256))) for _ in range(20)]
+        ],
+    )
+    def test_lib_aes(self, key: bytes, message: bytes) -> None:
+        aes_lib = AES.new(key, AES.MODE_ECB)
+        message_lib = pad(message, 16)
+
+        aes = AES128(cipher_key=key)
+        assert aes_lib.encrypt(message_lib) == aes.encrypt(message)
