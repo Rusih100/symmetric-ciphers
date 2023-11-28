@@ -8,6 +8,9 @@ def timer(function: Any) -> Any:
         value = function(*args)
         end_time = time()
         print()
-        print(f"Время выполнения функции {function.__name__} - {end_time-start_time} сек.")
+        print(
+            f"Время выполнения функции {function.__name__} - {end_time-start_time} сек."
+        )
         return value
+
     return wrapper
