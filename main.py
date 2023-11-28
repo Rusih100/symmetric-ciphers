@@ -1,13 +1,25 @@
 from src.ciphers import AES
-from src.text_statistics import process_russian_text, xi_square, UNIGRAM_FREQUENCIES, BIGRAM_FREQUENCIES
+from src.text_statistics import TextStatisticsReport
 from src.utils.timer import timer
+
+# ruff: noqa: RUF001
 
 
 def lab1_main() -> None:
     text = input("Введите текст:\n")
-    processed_text = process_russian_text(text)
+    report = TextStatisticsReport(text)
+    print(f"Последовательность:\n{report.text}\n")
+    print(f"Длина последовательности: {report.length}")
+    print(f"Значковый xi_square: {report.xi_square_unigram}")
+    print(f"Биграмный xi_square: {report.xi_square_bigram}")
 
-    print("Длина последовательности")
+    f = 0.1
+    print(f"Все триграммы частота встречаемости которых превышает {f}")
+    print(f"{report.trigram_frequencies(f)}\n")
+
+    k = 4
+    print("Все повторения участков последовательности, длина которых превышает")
+    print(report.ngram_frequencies(k))
 
 
 def aes_main() -> None:
@@ -27,7 +39,8 @@ def aes_main() -> None:
 
 @timer
 def main() -> None:
-    aes_main()
+    # aes_main()
+    lab1_main()
 
 
 if __name__ == "__main__":
