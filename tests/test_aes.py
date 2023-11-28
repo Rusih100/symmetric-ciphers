@@ -263,9 +263,7 @@ class TestAES128:
 
     @pytest.mark.parametrize(
         ("key", "message"),
-        [
-            *[(randbytes(16), randbytes(randint(1, 256))) for _ in range(10)]
-        ],
+        [*[(randbytes(16), randbytes(randint(1, 256))) for _ in range(10)]],
     )
     def test_lib_aes(self, key: bytes, message: bytes) -> None:
         aes_lib = LibAES.new(key, LibAES.MODE_ECB)
