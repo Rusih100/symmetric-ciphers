@@ -27,10 +27,12 @@ def des_main() -> None:
     print(block.hex())
     assert block == bytearray(b"\xfc\x60\x54\x40\xfc\x00\xd0\xd8")
 
+
 @timer
 def main() -> None:
     # aes_main()
     des_main()
+
 
 if __name__ == "__main__":
     main()
