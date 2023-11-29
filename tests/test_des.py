@@ -11,7 +11,7 @@ class TestDES:
         ("block", "expected_block"),
         [(bytearray(b'\x11"3DUfw\x88'), bytearray(b"xUxU\x80f\x80f"))],
     )
-    def test_initial_permutation_reversibility(
+    def test_initial_permutation(
         self, block: bytearray, expected_block: bytearray
     ) -> None:
         DES._initial_permutation(block)
@@ -73,3 +73,82 @@ class TestDES:
     )
     def test_permutation(self, bits: int, expected_bits: int) -> None:
         assert DES._permutation(bits) == expected_bits
+
+    @pytest.mark.parametrize(
+        ("bits", "expected_bits"),
+        [
+            (
+                0b0111010100101000011110000011100101110100100100111100101101110000,
+                0b01100000110101011001111110110110000000010001010011101101,
+            )
+        ],
+    )
+    def test_key_permutation(self, bits: int, expected_bits: int) -> None:
+        assert DES._key_permutation(bits) == expected_bits
+
+    @pytest.mark.parametrize(
+        (
+            "bits",
+            "expected_bits",
+            "offset",
+        ),
+        [
+            (
+                0b01100000110101011001111110110110000000010001010011101101,
+                0b11000001101010110011111101101100000000100010100111011010,
+                1,
+            )
+        ],
+    )
+    def test_rotate_key(
+        self,
+        bits: int,
+        expected_bits: int,
+        offset: int,
+    ) -> None:
+        assert DES._key_rotate(bits, offset) == expected_bits
+
+    @pytest.mark.parametrize(
+        ("bits", "expected_bits"),
+        [
+            (
+                0b11000001101010110011111101101100000000100010100111011010,
+                0b001110001010110011101111010001100101011001001010,
+            )
+        ],
+    )
+    def test_key_expansion(self, bits: int, expected_bits: int) -> None:
+        assert DES._key_expansion(bits) == expected_bits
+
+    @pytest.mark.parametrize(
+        ("key", "expected_schedule"),
+        [
+            (
+                b"\x75\x28\x78\x39\x74\x93\xCB\x70",
+                [
+                    0b001110001010110011101111010001100101011001001010,
+                    0b100010011011111011010100010010001001110100010010,
+                    0b010101000111111011101110010011010100010000111100,
+                    0b111100101111010101100000010010010101100011001000,
+                    0b110010001100111101100111100000001101000000111101,
+                    0b111000011111001100011111100000110001111010100100,
+                    0b001001011001011111100011100110000000101110110001,
+                    0b111100110101100011110011000100110100101000010101,
+                    0b000011001101101001111011101000000000101011000110,
+                    0b101001110111100101011110100101001010001010010111,
+                    0b001011100110111111000001001101110000011011000001,
+                    0b010110110111110100111001000110101010000101000011,
+                    0b110011011010010111011001001001101110010100000100,
+                    0b010101111100111010001111011010000010010111000010,
+                    0b011110111011100110000010111011001100000000001011,
+                    0b110100110011101000101101001000111000110101101000,
+                ],
+            )
+        ],
+    )
+    def test_init_key_schedule(
+        self, key: bytes, expected_schedule: list[int]
+    ) -> None:
+        des = DES(key)
+        assert len(des._key_schedule) == 16
+        assert des._key_schedule == expected_schedule

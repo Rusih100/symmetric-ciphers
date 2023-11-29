@@ -31,7 +31,8 @@ def des_main() -> None:
 @timer
 def main() -> None:
     # aes_main()
-    des_main()
+    # des_main()
+    ...
 
 
 if __name__ == "__main__":

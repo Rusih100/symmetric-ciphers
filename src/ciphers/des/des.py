@@ -1,6 +1,16 @@
+from ...bitwise_funcs import left_cyclic_shift
 from ...protocols import Blocks
 from ..blocks import BlocksSinglePKCS7
-from .consts import E_TABLE, INV_IP_TABLE, IP_TABLE, P_TABLE, S_TABLE
+from .consts import (
+    E_KEY_TABLE,
+    E_TABLE,
+    INV_IP_TABLE,
+    IP_TABLE,
+    KEY_SHIFT_TABLE,
+    P_KEY_TABLE,
+    P_TABLE,
+    S_TABLE,
+)
 
 
 class DES:
@@ -15,6 +25,10 @@ class DES:
 
         self._blocks_class = blocks_class
 
+        self._cipher_key = cipher_key
+        self._key_schedule: list[int] = []
+        self._init_key_schedule()
+
     def encrypt(self, data: bytes) -> bytes:
         ...
 
@@ -26,6 +40,44 @@ class DES:
 
     def _decrypt_block(self, block: bytearray) -> None:
         ...
+
+    def _init_key_schedule(self) -> None:
+        key_bits = int.from_bytes(self._cipher_key, byteorder="big")
+
+        key_bits = self._key_permutation(key_bits)
+        for shift in KEY_SHIFT_TABLE:
+            key_bits = self._key_rotate(key_bits, shift)
+
+            key = self._key_expansion(key_bits)
+            self._key_schedule.append(key)
+
+    @staticmethod
+    def _key_permutation(bits: int) -> int:
+        permutation_bits = 0
+        for i, offset in enumerate(P_KEY_TABLE):
+            bit = (bits >> (63 - offset)) & 1
+            permutation_bits |= bit << (55 - i)
+
+        return permutation_bits
+
+    @staticmethod
+    def _key_rotate(bits: int, shift: int) -> int:
+        left_key = bits >> 28
+        right_key = bits & 0xFFFFFFF
+
+        left_key = left_cyclic_shift(left_key, shift, 28)
+        right_key = left_cyclic_shift(right_key, shift, 28)
+
+        return (left_key << 28) | right_key
+
+    @staticmethod
+    def _key_expansion(bits: int) -> int:
+        extension_bits = 0
+        for i, offset in enumerate(E_KEY_TABLE):
+            bit = (bits >> (55 - offset)) & 1
+            extension_bits |= bit << (47 - i)
+
+        return extension_bits
 
     @staticmethod
     def _initial_permutation(block: bytearray) -> None:
