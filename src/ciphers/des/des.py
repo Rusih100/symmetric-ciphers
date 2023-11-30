@@ -1,6 +1,5 @@
 from ...bitwise_funcs import left_cyclic_shift
-from ...protocols import Blocks
-from ..blocks import BlocksSinglePKCS7
+from ..abc import BlockCipher
 from .consts import (
     E_KEY_TABLE,
     E_TABLE,
@@ -13,40 +12,9 @@ from .consts import (
 )
 
 
-class DES:
-    def __init__(
-        self,
-        cipher_key: bytes,
-        *,
-        blocks_class: Blocks = BlocksSinglePKCS7,
-    ) -> None:
-        assert isinstance(cipher_key, bytes)
-        assert len(cipher_key) == 8
-
-        self._blocks_class = blocks_class
-        self._block_size = 8
-
-        self._cipher_key = cipher_key
-        self._key_schedule: list[int] = []
-        self._init_key_schedule()
-
-    def encrypt(self, data: bytes) -> bytes:
-        blocks = self._blocks_class.to_blocks(
-            data, block_size=self._block_size, padding=True
-        )
-        for block in blocks:
-            self._encrypt_block(block)
-
-        return self._blocks_class.from_blocks(blocks, padding=False)
-
-    def decrypt(self, data: bytes) -> bytes:
-        blocks = self._blocks_class.to_blocks(
-            data, block_size=self._block_size, padding=False
-        )
-        for block in blocks:
-            self._decrypt_block(block)
-
-        return self._blocks_class.from_blocks(blocks, padding=True)
+class DES(BlockCipher):
+    _block_size = 8
+    _key_size = 8
 
     def _encrypt_block(self, block: bytearray) -> None:
         self._initial_permutation(block)
@@ -92,8 +60,10 @@ class DES:
         block[:] = bytearray(left_bytes + right_bytes)
         self._inverse_initial_permutation(block)
 
-    def _init_key_schedule(self) -> None:
-        key_bits = int.from_bytes(self._cipher_key, byteorder="big")
+    def _init_key_schedule(self, cipher_key: bytes) -> None:
+        self._key_schedule: list[int] = []
+
+        key_bits = int.from_bytes(cipher_key, byteorder="big")
 
         key_bits = self._key_permutation(key_bits)
         for shift in KEY_SHIFT_TABLE:
