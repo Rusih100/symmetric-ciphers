@@ -1,7 +1,9 @@
 from copy import copy
-from random import randbytes
+from random import randbytes, randint
 
 import pytest
+from Crypto.Util.Padding import pad
+from Crypto.Cipher import DES as LibDES
 
 from src.ciphers import DES
 
@@ -152,3 +154,74 @@ class TestDES:
         des = DES(key)
         assert len(des._key_schedule) == 16
         assert des._key_schedule == expected_schedule
+
+    @pytest.mark.parametrize(
+        ("bits", "key", "expected_bits"),
+        [
+            (
+                0b10000000011001101000000001100110,
+                0b001110001010110011101111010001100101011001001010,
+                0b01001011011111011101001110000010,
+            )
+        ]
+    )
+    def test_feistel_function(
+        self, bits: int, key: int, expected_bits: int
+    ) -> None:
+        assert DES._feistel_function(bits, key) == expected_bits
+
+    @pytest.mark.parametrize(
+        ("key", "block", "expected_block"),
+        [
+            # fmt: off
+            (
+                b"\x75\x28\x78\x39\x74\x93\xCB\x70",
+                bytearray(
+                    b"\x11\x22\x33\x44\x55\x66\x77\x88"
+                ),
+                bytearray(
+                    b"\xB5\x21\x9E\xE8\x1A\xA7\x49\x9D"
+                )
+            )
+            # fmt: on
+        ],
+    )
+    def test_encrypt_block(
+            self, key: bytes, block: bytearray, expected_block: bytearray
+    ) -> None:
+        des = DES(cipher_key=key)
+        des._encrypt_block(block)
+
+        assert block == expected_block
+
+    @pytest.mark.parametrize(
+        ("key", "block"),
+        [
+            # fmt: off
+            *[
+                (
+                    randbytes(8),
+                    bytearray(randbytes(8))
+                ) for _ in range(10)
+            ]
+            # fmt: on
+        ],
+    )
+    def test_decrypt_block(self, key: bytes, block: bytearray) -> None:
+        b = copy(block)
+        des = DES(cipher_key=key)
+        des._encrypt_block(block)
+        des._decrypt_block(block)
+
+        assert block == b
+
+    @pytest.mark.parametrize(
+        ("key", "message"),
+        [*[(randbytes(8), randbytes(randint(1, 256))) for _ in range(10)]],
+    )
+    def test_lib_des(self, key: bytes, message: bytes) -> None:
+        des_lib = LibDES.new(key, LibDES.MODE_ECB)
+        message_lib = pad(message, 8)
+
+        des = DES(cipher_key=key)
+        assert des_lib.encrypt(message_lib) == des.encrypt(message)
