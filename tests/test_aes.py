@@ -8,7 +8,7 @@ from Crypto.Util.Padding import pad
 from src.ciphers import AES
 
 
-class TestAES128:
+class TestAES:
     @pytest.mark.parametrize(
         ("block", "expected_block"),
         [

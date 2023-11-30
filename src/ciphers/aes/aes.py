@@ -14,12 +14,13 @@ class AES:
         assert len(cipher_key) == 16
 
         self._blocks_class = blocks_class
+        self._block_size = 16
 
         self._key_schedule: bytearray = bytearray(cipher_key)
-        self._key_expansion()
+        self._init_key_schedule()
 
     def encrypt(self, data: bytes) -> bytes:
-        blocks = self._blocks_class.to_blocks(data, block_size=16, padding=True)
+        blocks = self._blocks_class.to_blocks(data, block_size=self._block_size, padding=True)
         for block in blocks:
             self._encrypt_block(block)
 
@@ -27,7 +28,7 @@ class AES:
 
     def decrypt(self, data: bytes) -> bytes:
         blocks = self._blocks_class.to_blocks(
-            data, block_size=16, padding=False
+            data, block_size=self._block_size, padding=False
         )
         for block in blocks:
             self._decrypt_block(block)
@@ -60,7 +61,7 @@ class AES:
 
         self._inverse_add_round_key(block, 0)
 
-    def _key_expansion(self) -> None:
+    def _init_key_schedule(self) -> None:
         for r in range(10):
             word = self._key_schedule[-4:]
             self._rot_word(word)
