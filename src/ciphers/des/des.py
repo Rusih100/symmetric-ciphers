@@ -31,7 +31,9 @@ class DES:
         self._init_key_schedule()
 
     def encrypt(self, data: bytes) -> bytes:
-        blocks = self._blocks_class.to_blocks(data, block_size=self._block_size, padding=True)
+        blocks = self._blocks_class.to_blocks(
+            data, block_size=self._block_size, padding=True
+        )
         for block in blocks:
             self._encrypt_block(block)
 
@@ -55,13 +57,15 @@ class DES:
 
         for i in range(16):
             new_left = right
-            new_right = left ^ self._feistel_function(right, self._key_schedule[i])
+            new_right = left ^ self._feistel_function(
+                right, self._key_schedule[i]
+            )
 
             left = new_left
             right = new_right
 
-        left_bytes = left.to_bytes(4, byteorder="big")
-        right_bytes = right.to_bytes(4, byteorder="big")
+        left_bytes = bytearray(left.to_bytes(4, byteorder="big"))
+        right_bytes = bytearray(right.to_bytes(4, byteorder="big"))
 
         block[:] = right_bytes + left_bytes
         self._inverse_initial_permutation(block)
@@ -75,15 +79,17 @@ class DES:
 
         for i in range(15, -1, -1):
             new_right = left
-            new_left = right ^ self._feistel_function(left, self._key_schedule[i])
+            new_left = right ^ self._feistel_function(
+                left, self._key_schedule[i]
+            )
 
             right = new_right
             left = new_left
 
-        left_bytes = left.to_bytes(4, byteorder="big")
-        right_bytes = right.to_bytes(4, byteorder="big")
+        left_bytes = bytearray(left.to_bytes(4, byteorder="big"))
+        right_bytes = bytearray(right.to_bytes(4, byteorder="big"))
 
-        block[:] = left_bytes + right_bytes
+        block[:] = bytearray(left_bytes + right_bytes)
         self._inverse_initial_permutation(block)
 
     def _init_key_schedule(self) -> None:

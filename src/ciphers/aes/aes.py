@@ -20,7 +20,9 @@ class AES:
         self._init_key_schedule()
 
     def encrypt(self, data: bytes) -> bytes:
-        blocks = self._blocks_class.to_blocks(data, block_size=self._block_size, padding=True)
+        blocks = self._blocks_class.to_blocks(
+            data, block_size=self._block_size, padding=True
+        )
         for block in blocks:
             self._encrypt_block(block)
 

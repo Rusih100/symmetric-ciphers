@@ -2,8 +2,8 @@ from copy import copy
 from random import randbytes, randint
 
 import pytest
-from Crypto.Util.Padding import pad
 from Crypto.Cipher import DES as LibDES
+from Crypto.Util.Padding import pad
 
 from src.ciphers import DES
 
@@ -163,7 +163,7 @@ class TestDES:
                 0b001110001010110011101111010001100101011001001010,
                 0b01001011011111011101001110000010,
             )
-        ]
+        ],
     )
     def test_feistel_function(
         self, bits: int, key: int, expected_bits: int
@@ -187,7 +187,7 @@ class TestDES:
         ],
     )
     def test_encrypt_block(
-            self, key: bytes, block: bytearray, expected_block: bytearray
+        self, key: bytes, block: bytearray, expected_block: bytearray
     ) -> None:
         des = DES(cipher_key=key)
         des._encrypt_block(block)
