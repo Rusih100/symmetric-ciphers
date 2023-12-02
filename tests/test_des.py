@@ -190,7 +190,7 @@ class TestDES:
         self, key: bytes, block: bytearray, expected_block: bytearray
     ) -> None:
         des = DES(cipher_key=key)
-        des._encrypt_block(block)
+        des.encrypt_block(block)
 
         assert block == expected_block
 
@@ -210,8 +210,8 @@ class TestDES:
     def test_decrypt_block(self, key: bytes, block: bytearray) -> None:
         b = copy(block)
         des = DES(cipher_key=key)
-        des._encrypt_block(block)
-        des._decrypt_block(block)
+        des.encrypt_block(block)
+        des.decrypt_block(block)
 
         assert block == b
 

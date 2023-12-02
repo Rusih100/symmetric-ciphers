@@ -1,3 +1,3 @@
-from .des import DES
+from src.ciphers.des.des import DES
 
 __all__ = ("DES",)
