@@ -40,7 +40,7 @@ def aes_main() -> None:
 def des_main() -> None:
     key = b"SecretKe"
 
-    des = DES(cipher_key=key)
+    des = DES(cipher_key=key, cipher_mode="ctr")
 
     message = b"This is the test message for des"
 
@@ -48,7 +48,6 @@ def des_main() -> None:
 
     print(cipher_message)
     decrypt_message = des.decrypt(cipher_message)
-
     print(decrypt_message)
 
 
@@ -57,6 +56,7 @@ def main() -> None:
     des_main()
     # aes_main()
     # lab1_main()
+    pass
 
 
 if __name__ == "__main__":
