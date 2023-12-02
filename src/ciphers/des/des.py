@@ -1,6 +1,6 @@
-from ...bitwise_funcs import left_cyclic_shift
-from ..abc import BlockCipher
-from .consts import (
+from src.abc import BlockCipher
+from src.bitwise_funcs import left_cyclic_shift
+from src.ciphers.des.consts import (
     E_KEY_TABLE,
     E_TABLE,
     INV_IP_TABLE,
@@ -16,7 +16,7 @@ class DES(BlockCipher):
     _block_size = 8
     _key_size = 8
 
-    def _encrypt_block(self, block: bytearray) -> None:
+    def encrypt_block(self, block: bytearray) -> None:
         self._initial_permutation(block)
 
         left_bytes, right_bytes = block[:4], block[4:]
@@ -38,7 +38,7 @@ class DES(BlockCipher):
         block[:] = right_bytes + left_bytes
         self._inverse_initial_permutation(block)
 
-    def _decrypt_block(self, block: bytearray) -> None:
+    def decrypt_block(self, block: bytearray) -> None:
         self._initial_permutation(block)
 
         right_bytes, left_bytes = block[:4], block[4:]

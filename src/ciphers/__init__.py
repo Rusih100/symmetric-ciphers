@@ -1,5 +1,5 @@
-from .aes import AES
-from .des import DES
-from .vernam import Vernam
+from src.ciphers.aes import AES
+from src.ciphers.des import DES
+from src.ciphers.vernam import Vernam
 
 __all__ = ("AES", "DES", "Vernam")

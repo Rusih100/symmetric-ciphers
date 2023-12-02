@@ -1,9 +1,16 @@
 from collections.abc import Callable, Mapping
 
-from .default_frequencies import BIGRAM_FREQUENCIES, UNIGRAM_FREQUENCIES
-from .grams import bigram_frequencies, ngram_frequencies, unigram_frequencies
-from .process_text import process_russian_text
-from .statistics import xi_square
+from src.text_statistics.default_frequencies import (
+    BIGRAM_FREQUENCIES,
+    UNIGRAM_FREQUENCIES,
+)
+from src.text_statistics.grams import (
+    bigram_frequencies,
+    ngram_frequencies,
+    unigram_frequencies,
+)
+from src.text_statistics.process_text import process_russian_text
+from src.text_statistics.statistics import xi_square
 
 
 class TextStatisticsReport:

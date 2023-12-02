@@ -1,12 +1,17 @@
-from ..abc import BlockCipher
-from .consts import INV_SBOX_TABLE, POLY_MUL_TABLE, RCON_TABLE, SBOX_TABLE
+from src.abc import BlockCipher
+from src.ciphers.aes.consts import (
+    INV_SBOX_TABLE,
+    POLY_MUL_TABLE,
+    RCON_TABLE,
+    SBOX_TABLE,
+)
 
 
 class AES(BlockCipher):
     _block_size = 16
     _key_size = 16
 
-    def _encrypt_block(self, block: bytearray) -> None:
+    def encrypt_block(self, block: bytearray) -> None:
         self._add_round_key(block, 0)
 
         for r in range(1, 10):
@@ -19,7 +24,7 @@ class AES(BlockCipher):
         self._shift_rows(block)
         self._add_round_key(block, 10)
 
-    def _decrypt_block(self, block: bytearray) -> None:
+    def decrypt_block(self, block: bytearray) -> None:
         self._inverse_add_round_key(block, 10)
         self._inverse_shift_rows(block)
         self._inverse_sub_bytes(block)

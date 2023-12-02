@@ -230,7 +230,7 @@ class TestAES:
         self, key: bytes, block: bytearray, expected_block: bytearray
     ) -> None:
         aes = AES(cipher_key=key)
-        aes._encrypt_block(block)
+        aes.encrypt_block(block)
 
         assert block == expected_block
 
@@ -256,8 +256,8 @@ class TestAES:
     def test_decrypt_block(self, key: bytes, block: bytearray) -> None:
         b = copy(block)
         aes = AES(cipher_key=key)
-        aes._encrypt_block(block)
-        aes._decrypt_block(block)
+        aes.encrypt_block(block)
+        aes.decrypt_block(block)
 
         assert block == b
 
