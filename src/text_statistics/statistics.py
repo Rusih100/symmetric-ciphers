@@ -6,5 +6,7 @@ def xi_square(
 ) -> float:
     total = 0.0
     for g in frequencies.keys():
-        total += (default_frequencies[g] - frequencies[g]) ** 2 / frequencies[g]
+        if default_frequencies[g] == 0.0:
+            continue
+        total += (frequencies[g] - default_frequencies[g]) ** 2 / default_frequencies[g]
     return total
