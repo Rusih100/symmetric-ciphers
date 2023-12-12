@@ -12,7 +12,7 @@ def change_encoding(file_path: Path) -> None:
 
 
 files_paths = [
-    BASE_DIR / "1.15",
+    BASE_DIR / "3.15",
     BASE_DIR / "README.TXT",
 ]
 
