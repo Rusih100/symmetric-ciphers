@@ -4,9 +4,7 @@ def check_word_by_pattern(word: str, pattern: str) -> bool:
     if len(set(pattern)) != len(set(word)):
         return False
 
-    replace_map: dict[str, str] = dict(
-        zip(word, pattern)
-    )
+    replace_map: dict[str, str] = dict(zip(word, pattern, strict=True))
     check_word = ""
     for char in word:
         check_word += replace_map[char]
@@ -17,7 +15,6 @@ def check_word_by_pattern(word: str, pattern: str) -> bool:
 def get_update_decrypt_alphabet(
     word: str, pattern: str, alphabet: dict[str, str]
 ) -> dict[str, str]:
-
     updated_alphabet: dict[str, str] = {}
     for i, char in enumerate(word):
         if char not in alphabet:
@@ -49,7 +46,3 @@ def search_word_by_pattern(
         return word, updated_alphabet
 
     return None, {}
-
-
-
-

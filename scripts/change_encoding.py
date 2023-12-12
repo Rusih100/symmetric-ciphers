@@ -1,6 +1,6 @@
 from pathlib import Path
 
-BASE_DIR = Path(__file__).parent.parent / "data" / "lab2"
+BASE_DIR = Path(__file__).parent.parent / "data" / "lab3"
 
 
 def change_encoding(file_path: Path) -> None:
@@ -12,10 +12,7 @@ def change_encoding(file_path: Path) -> None:
 
 
 files_paths = [
-    BASE_DIR / "2.po",
-    BASE_DIR / "2.z1",
-    BASE_DIR / "2.z2",
-    BASE_DIR / "2B.txt",
+    BASE_DIR / "1.15",
     BASE_DIR / "README.TXT",
 ]
 
