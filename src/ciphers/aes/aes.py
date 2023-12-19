@@ -122,7 +122,7 @@ class AES(BlockCipher):
 
     def _add_round_key(self, block: bytearray, round_num: int) -> None:
         for i in range(16):
-            block[i] = block[i] ^ self._key_schedule[i + (round_num * 16)]
+            block[i] ^= self._key_schedule[i + (round_num * 16)]
 
     def _inverse_add_round_key(self, block: bytearray, round_num: int) -> None:
         self._add_round_key(block, round_num)
