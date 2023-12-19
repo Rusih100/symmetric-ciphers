@@ -204,7 +204,7 @@ class TestAES:
             # fmt: on
         ],
     )
-    def test_key_expansion(
+    def test_init_key_schedule(
         self, key: bytes, expected_key_schedule: bytearray
     ) -> None:
         aes = AES(cipher_key=key)
