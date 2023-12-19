@@ -162,3 +162,35 @@ class TestGrasshopper:
     ) -> None:
         gh = Grasshopper(cipher_key=key)
         assert gh._key_schedule == expected_key_schedule
+
+    @pytest.mark.parametrize(
+        ("key", "block", "expected_block"),
+        [
+            (
+                bytes.fromhex(
+                    "8899aabbccddeeff0011223344556677fedcba98765432100123456789abcdef"
+                )[::-1],
+                bytearray.fromhex("1122334455667700ffeeddccbbaa9988")[::-1],
+                bytearray.fromhex("7f679d90bebc24305a468d42b9d4edcd")[::-1],
+            )
+        ],
+    )
+    def test_encrypt_block(
+        self, key: bytes, block: bytearray, expected_block: bytearray
+    ) -> None:
+        gh = Grasshopper(cipher_key=key)
+        gh.encrypt_block(block)
+
+        assert block == expected_block
+
+    @pytest.mark.parametrize(
+        ("key", "block"),
+        [*[(randbytes(32), bytearray(randbytes(16))) for _ in range(10)]],
+    )
+    def test_decrypt_block(self, key: bytes, block: bytearray) -> None:
+        b = copy(block)
+        gh = Grasshopper(cipher_key=key)
+        gh.encrypt_block(block)
+        gh.decrypt_block(block)
+
+        assert block == b
