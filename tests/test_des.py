@@ -165,10 +165,8 @@ class TestDES:
             )
         ],
     )
-    def test_feistel_function(
-        self, bits: int, key: int, expected_bits: int
-    ) -> None:
-        assert DES._feistel_function(bits, key) == expected_bits
+    def test_f_function(self, bits: int, key: int, expected_bits: int) -> None:
+        assert DES._f_function(bits, key) == expected_bits
 
     @pytest.mark.parametrize(
         ("key", "block", "expected_block"),

@@ -1,6 +1,7 @@
 from copy import copy
 
 from src.abc import BlockCipher
+from src.bytes_funcs import repack_bytearray, repack_bytes
 from src.ciphers.grasshopper.consts import (
     INV_PI_TABLE,
     INV_ROTATE_TABLE,
@@ -16,7 +17,7 @@ class Grasshopper(BlockCipher):
     _key_size = 32
 
     def _init_key_schedule(self, cipher_key: bytes) -> None:
-        cipher_key = self._repack_bytes(cipher_key)
+        cipher_key = repack_bytes(cipher_key)
 
         first_block = bytearray(cipher_key[:16])
         second_block = bytearray(cipher_key[16:])
@@ -31,7 +32,7 @@ class Grasshopper(BlockCipher):
             self._key_schedule.append(copy(second_block))
 
     def encrypt_block(self, block: bytearray) -> None:
-        self._repack_bytearray(block)
+        repack_bytearray(block)
 
         for i in range(9):
             self._xor_blocks(block, self._key_schedule[i])
@@ -39,10 +40,11 @@ class Grasshopper(BlockCipher):
             self._linear(block)
 
         self._xor_blocks(block, self._key_schedule[9])
-        self._repack_bytearray(block)
+
+        repack_bytearray(block)
 
     def decrypt_block(self, block: bytearray) -> None:
-        self._repack_bytearray(block)
+        repack_bytearray(block)
         self._xor_blocks(block, self._key_schedule[9])
 
         for i in range(8, -1, -1):
@@ -50,7 +52,7 @@ class Grasshopper(BlockCipher):
             self._inverse_substitution(block)
             self._xor_blocks(block, self._key_schedule[i])
 
-        self._repack_bytearray(block)
+        repack_bytearray(block)
 
     @staticmethod
     def _substitution(block: bytearray) -> None:
@@ -111,11 +113,3 @@ class Grasshopper(BlockCipher):
     def _xor_blocks(block: bytearray, other_block: bytearray | bytes) -> None:
         for i in range(16):
             block[i] ^= other_block[i]
-
-    @staticmethod
-    def _repack_bytearray(block: bytearray) -> None:
-        block[:] = reversed(block)
-
-    @staticmethod
-    def _repack_bytes(block: bytes) -> bytes:
-        return bytes(reversed(block))
