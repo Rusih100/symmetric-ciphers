@@ -7,7 +7,8 @@ from src.text_statistics import (
     unigram_frequencies,
 )
 
-INPUT_FILE_PATH = Path(__file__).parent / "war_and_peace.txt"
+INPUT_FILE_PATH = Path(__file__).parent.parent / "data" / "war_and_peace.txt"
+print(INPUT_FILE_PATH)
 
 with open(INPUT_FILE_PATH, encoding="utf-8") as file:
     text = file.read()

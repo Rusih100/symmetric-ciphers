@@ -3,5 +3,6 @@
 .mypy_cache
 .pytest_cache
 
-scripts/calculate_text_statistics/war_and_peace.txt
-scripts/calculate_text_statistics/war_and_peace_processed.txt
+data
+data/*
+notebooks/.ipynb_checkpoints
