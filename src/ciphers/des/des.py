@@ -25,9 +25,7 @@ class DES(BlockCipher):
 
         for i in range(16):
             new_left = right
-            new_right = left ^ self._feistel_function(
-                right, self._key_schedule[i]
-            )
+            new_right = left ^ self._f_function(right, self._key_schedule[i])
 
             left = new_left
             right = new_right
@@ -47,9 +45,7 @@ class DES(BlockCipher):
 
         for i in range(15, -1, -1):
             new_right = left
-            new_left = right ^ self._feistel_function(
-                left, self._key_schedule[i]
-            )
+            new_left = right ^ self._f_function(left, self._key_schedule[i])
 
             right = new_right
             left = new_left
@@ -57,7 +53,7 @@ class DES(BlockCipher):
         left_bytes = bytearray(left.to_bytes(4, byteorder="big"))
         right_bytes = bytearray(right.to_bytes(4, byteorder="big"))
 
-        block[:] = bytearray(left_bytes + right_bytes)
+        block[:] = left_bytes + right_bytes
         self._inverse_initial_permutation(block)
 
     def _init_key_schedule(self, cipher_key: bytes) -> None:
@@ -123,7 +119,7 @@ class DES(BlockCipher):
         block[:] = permutation_bits.to_bytes(length=8, byteorder="big")
 
     @classmethod
-    def _feistel_function(cls, right_bits: int, key: int) -> int:
+    def _f_function(cls, right_bits: int, key: int) -> int:
         extension_bits = cls._expansion(right_bits)
         xor_bits = extension_bits ^ key
 
