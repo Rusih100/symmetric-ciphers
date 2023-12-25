@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "crypto-labs"
+name = "symmetric-ciphers"
 version = "0.1.0"
-description = ""
+description = "Реализация симметричных шифров AES, DES, Магма, Кузнечик и Вермана."
 authors = ["Rusih100 <rusih100@gmail.com>"]
 readme = "README.md"
 
